@@ -1,0 +1,45 @@
+---
+
+- name: Creates directory
+  file:
+    path: /home/ubuntu/backend
+    state: directory
+
+- name: "install dependencies."
+  become: true
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "update apt packages."
+  become: true
+  apt:
+    update_cache: yes
+
+
+
+- name: Copy artifact.tar.gz files
+  unarchive:
+    src: /root/project/artifact.tar.gz
+    dest: /home/ubuntu/backend
+
+- name: Build backend
+  ignore_errors: yes
+  shell: |
+    cd /home/ubuntu/backend
+    npm i
+    npm run build
+
+- name: delete anything that might already be running
+  become: true
+  command: pm2 delete all
+  ignore_errors: true
+
+- name: Start server
+  become: true
+  shell: |
+    cd /home/ubuntu/backend
+    pm2 start npm --name backend -- start
+    pm2 ls
+   
