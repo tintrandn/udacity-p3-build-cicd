@@ -336,7 +336,7 @@ jobs:
             apk add --update tar
             pip3 install awscli     
       - run:
-           name: Backend smoke test.
+          name: Backend smoke test.
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
